@@ -1,5 +1,6 @@
 require 'tempfile'
 require 'yaml'
+require 'open3'
 
 module AnsibleRunner
   class Core
@@ -12,6 +13,10 @@ module AnsibleRunner
 
       generate_inventory_file hosts
       validate_playbook_yaml
+    end
+
+    def run
+      Open3.popen3(ansible_command)
     end
 
     private
@@ -33,6 +38,10 @@ module AnsibleRunner
       rescue Psych::SyntaxError
         raise Errors::YamlSyntaxError
       end
+    end
+
+    def ansible_command
+      "ansible-playbook -i #{@inventory_file.path} #{@playbook_path}"
     end
   end
 

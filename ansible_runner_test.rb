@@ -3,11 +3,7 @@ require "minitest/autorun"
 
 describe 'AnsibleRunner' do
   before do
-    @ar = AnsibleRunner::Core.new ["localhost"], "./ansible/update.yml"
-  end
-
-  it "must have access to a ansible-playbook executable" do
-    # Not sure how to test this condition
+    @ar = AnsibleRunner::Core.new ["localhost"], "./ansible/ping.yml"
   end
 
   it "creates temporary inventory file from hosts" do
@@ -17,14 +13,14 @@ describe 'AnsibleRunner' do
   end
 
   it "handles multiple hosts by creating one per-line in the temporary file" do
-    ar = AnsibleRunner::Core.new ["localhost", "127.0.0.1"], "./ansible/update.yml"
+    ar = AnsibleRunner::Core.new ["localhost", "127.0.0.1"], "./ansible/ping.yml"
     ar.inventory_file.path.wont_equal ""
     inventory = File.read ar.inventory_file.path
     inventory.must_equal "localhost\n127.0.0.1\n"
   end
 
   it "only accepts array of string hostnames" do
-    proc { AnsibleRunner::Core.new [1, 2, 3], "./ansible/update.yml" }.must_raise ArgumentError
+    proc { AnsibleRunner::Core.new [1, 2, 3], "./ansible/ping.yml" }.must_raise ArgumentError
   end
 
   it "raises error on invalid syntax of playbook file" do
@@ -32,7 +28,8 @@ describe 'AnsibleRunner' do
   end
 
   it "runs the playbook across all hosts given" do
-    skip "Not Implemented"
+    stdin, stdout, stderr, thr = @ar.run
+    stdout.readlines.wont_be_empty
   end
 
   it "displays whether the play was successful or not in stdout" do
