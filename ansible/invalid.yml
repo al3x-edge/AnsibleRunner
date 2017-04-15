@@ -1,3 +1,9 @@
-Meow!
-
-Why be this failing?
+- name: Configure webserver with nginx
+  hosts: webservers
+  sudo: True
+  tasks:
+    - name: install nginx
+    - apt: name=nginx update_cache=yes
+       environment:
+          http_proxy: myproxy.com:8088
+          https_proxy: myproxy.com:8088

@@ -2,12 +2,14 @@ GEM
   remote: https://rubygems.org/
   specs:
     minitest (5.10.1)
+    psych (2.0.8)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   minitest
+  psych
 
 BUNDLED WITH
    1.14.6

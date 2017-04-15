@@ -3,7 +3,7 @@ require "minitest/autorun"
 
 describe 'AnsibleRunner' do
   before do
-    @ar = AnsibleRunner.new ["localhost"]
+    @ar = AnsibleRunner::Core.new ["localhost"], "./ansible/update.yml"
   end
 
   it "must have access to a ansible-playbook executable" do
@@ -17,18 +17,18 @@ describe 'AnsibleRunner' do
   end
 
   it "handles multiple hosts by creating one per-line in the temporary file" do
-    ar = AnsibleRunner.new ["localhost", "127.0.0.1"]
+    ar = AnsibleRunner::Core.new ["localhost", "127.0.0.1"], "./ansible/update.yml"
     ar.inventory_file.path.wont_equal ""
     inventory = File.read ar.inventory_file.path
     inventory.must_equal "localhost\n127.0.0.1\n"
   end
 
   it "only accepts array of string hostnames" do
-    proc { AnsibleRunner.new [1, 2, 3] }.must_raise ArgumentError
+    proc { AnsibleRunner::Core.new [1, 2, 3], "./ansible/update.yml" }.must_raise ArgumentError
   end
 
-  it "validates yml syntax" do
-    skip "Not Implemented"
+  it "raises error on invalid syntax of playbook file" do
+    proc { AnsibleRunner::Core.new ["localhost"], "./ansible/invalid.yml" }.must_raise AnsibleRunner::Errors::YamlSyntaxError
   end
 
   it "runs the playbook across all hosts given" do
